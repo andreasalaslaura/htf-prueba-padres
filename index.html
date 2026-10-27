@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hackea tu Futuro · Prueba con padres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1D2535; --card:#121A2B; --card2:#172036; --line:#2A3446; --line2:#333D4D;
+  --fg:#F2F2F2; --muted:#9DA3AF; --soft:#C9CED8; --cyan:#37D9F6; --cyan-2:#8BE9FA;
+  --cyan-done:#2C8FA4; --amber:#F5B544; --amber-line:#6B5426; --ink:#0F1726;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0B1020;overflow:hidden}
+body{font-family:Roboto,sans-serif;color:var(--fg)}
+#viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{width:1440px;height:810px;position:relative;transform-origin:center center;flex-shrink:0}
+.slide{position:absolute;inset:0;background:var(--bg);display:none;flex-direction:column;overflow:hidden}
+.slide.active{display:flex}
+
+/* Barra superior */
+.topbar{height:64px;flex-shrink:0;padding:0 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:16px}
+.brand .logo{font-family:Orbitron,sans-serif;font-weight:700;font-size:18px;letter-spacing:.08em;color:var(--cyan)}
+.brand .sep{width:1px;height:20px;background:var(--line2)}
+.brand .by{font-size:14px;color:var(--muted)}
+.top-right{display:flex;align-items:center;gap:16px}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;border:1px solid #2E5E6B;background:rgba(55,217,246,.08);font-size:13px;color:var(--cyan-2)}
+.saved{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.help-btn{height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--fg);font:500 14px Roboto,sans-serif;display:inline-flex;align-items:center;gap:6px}
+
+/* Estructura con ruta lateral */
+.layout{flex-grow:1;display:flex;min-height:0}
+.sidebar{width:300px;flex-shrink:0;background:var(--card);border-right:1px solid var(--line);padding:24px 18px 20px;display:flex;flex-direction:column;gap:4px}
+.sidebar .eyebrow{margin-bottom:2px}
+.sidebar .side-sub{font-size:13px;color:var(--muted);margin:0 0 12px;line-height:1.4}
+.step{display:flex;gap:12px;align-items:flex-start;padding:9px 10px;border-radius:10px}
+.step.current{background:rgba(55,217,246,.09);outline:1px solid #2E5E6B}
+.step .dot{width:26px;height:26px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 12px Orbitron,sans-serif}
+.step.done .dot{background:var(--cyan-done);color:var(--ink)}
+.step.current .dot{border:2px solid var(--cyan);color:var(--cyan)}
+.step.pending .dot{border:1px solid var(--line2);color:var(--muted)}
+.step .s-name{font-size:14px;font-weight:500;line-height:1.3}
+.step.pending .s-name{color:var(--soft)}
+.step .s-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.side-progress{margin-top:auto;padding:14px 10px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.side-progress .p-text{font-size:13px;color:var(--soft)}
+.pbar{height:6px;border-radius:3px;background:var(--line2);overflow:hidden}
+.pbar span{display:block;height:100%;background:var(--cyan)}
+
+.main{flex-grow:1;min-width:0;padding:22px 40px 22px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:Orbitron,sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;color:var(--cyan)}
+.page-head h1{margin:4px 0 4px;font-size:28px;line-height:1.2;font-weight:700}
+.page-head p{margin:0;font-size:16px;line-height:1.45;color:#B4BAC6}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.card-title{font-family:Orbitron,sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;color:var(--cyan);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.card-title .tag{font-family:Roboto,sans-serif;font-weight:500;letter-spacing:0;font-size:12px;color:var(--muted)}
+.btn-primary{height:48px;padding:0 22px;border:0;border-radius:12px;background:var(--cyan);color:var(--ink);font:700 15px Roboto,sans-serif;box-shadow:0 0 20px rgba(55,217,246,.3)}
+.btn-secondary{height:48px;padding:0 18px;border-radius:12px;border:1px solid var(--line2);background:transparent;color:var(--fg);font:500 15px Roboto,sans-serif}
+label.field{font-size:14px;font-weight:500;display:block;margin-bottom:6px}
+.input{width:100%;height:46px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);background:var(--card2);color:var(--fg);font:400 15px Roboto,sans-serif}
+.input:focus,select.input:focus{outline:2px solid var(--cyan);outline-offset:1px}
+.money{display:flex;align-items:center;gap:8px;height:46px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);background:var(--card2)}
+.money span{color:var(--muted);font-size:15px}
+.money input{flex-grow:1;min-width:0;height:42px;border:0;background:transparent;color:var(--fg);font:500 17px Roboto,sans-serif}
+.money input:focus{outline:none}
+.money:focus-within{outline:2px solid var(--cyan);outline-offset:1px}
+.hint{font-size:12px;line-height:1.4;color:var(--muted);margin-top:6px}
+.chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:12px;white-space:nowrap}
+.chip.ok{background:rgba(55,217,246,.12);color:var(--cyan-2)}
+.chip.warn{border:1px solid var(--amber-line);color:var(--amber)}
+.chip.neutral{border:1px solid var(--line2);color:var(--muted)}
+.qmark{display:inline-flex;width:18px;height:18px;border-radius:50%;border:1px solid var(--line2);color:var(--muted);font-size:11px;align-items:center;justify-content:center;margin-left:6px;cursor:help;vertical-align:middle}
+.source{font-size:11px;color:#8C93A1;margin-top:10px}
+
+/* Mapa */
+.map-main{flex-grow:1;padding:36px 64px 40px;display:flex;flex-direction:column;justify-content:center;gap:36px}
+.map-head{display:flex;justify-content:space-between;align-items:flex-end;gap:40px}
+.map-head h1{margin:8px 0 8px;font-size:36px;line-height:1.18;font-weight:700}
+.map-head p{margin:0;font-size:17px;line-height:1.5;color:#B4BAC6;max-width:760px}
+.map-stats{display:flex;gap:10px;flex-shrink:0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-width:120px}
+.stat b{display:block;font-size:22px}
+.stat span{font-size:13px;color:var(--muted)}
+.route{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+.route::before{content:"";position:absolute;left:8%;right:8%;top:34px;height:2px;background:var(--line2)}
+.r-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 16px 16px;display:flex;flex-direction:column;gap:8px;min-height:226px}
+.r-num{width:34px;height:34px;border-radius:50%;background:#1A2A3F;border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;font:700 14px Orbitron,sans-serif;color:var(--cyan)}
+.r-name{font-size:16px;font-weight:700;line-height:1.3}
+.r-q{font-size:14px;color:var(--muted);line-height:1.4}
+.r-meta{margin-top:auto;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.with-kid{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:rgba(55,217,246,.1);color:var(--cyan-2)}
+.doors-head{display:flex;justify-content:space-between;align-items:baseline}
+.doors-head h2{margin:0;font-size:22px}
+.doors-head span{font-size:14px;color:var(--muted)}
+.doors{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.door{display:flex;align-items:center;gap:16px;min-height:86px;padding:16px 20px;text-align:left;border-radius:14px;border:1px solid var(--cyan);background:rgba(55,217,246,.06);color:var(--fg);font-family:Roboto,sans-serif}
+.door b{display:block;font-size:18px;margin-bottom:4px}
+.door small{font-size:14px;color:var(--muted)}
+.door svg{margin-left:auto;flex-shrink:0}
+
+/* Mito */
+.overlay{position:absolute;inset:64px 0 0 0;background:rgba(8,12,22,.78);display:flex;align-items:center;justify-content:center}
+.modal{width:620px;background:var(--card);border:1px solid var(--line2);border-radius:18px;padding:30px 32px;display:flex;flex-direction:column;gap:18px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-top{display:flex;justify-content:space-between;align-items:center}
+.close{width:36px;height:36px;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.myth{margin:0;font-size:24px;line-height:1.4;font-weight:500}
+.vf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.vf button{height:52px;border-radius:12px;border:1px solid var(--line2);background:var(--card2);color:var(--fg);font:500 16px Roboto,sans-serif}
+.answer{padding-top:18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.answer b{color:var(--cyan);font-size:18px}
+.answer p{margin:0;font-size:16px;line-height:1.55;color:var(--soft)}
+
+/* Ficha */
+.ficha-grid{flex-grow:1;min-height:0;display:grid;grid-template-columns:290px minmax(0,1fr);gap:20px}
+.left-col{display:flex;flex-direction:column;gap:16px}
+.right-col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.line{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;margin-bottom:6px;gap:12px}
+.line small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.total{display:flex;justify-content:space-between;align-items:baseline;padding-top:10px;border-top:1px solid var(--line);margin-bottom:8px}
+.total b{font-size:22px}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--line2);margin:8px 0 10px}
+.bar .in{background:var(--cyan)}
+.bar .gap{background:var(--amber)}
+.status{display:block;padding:9px 12px;border-radius:10px;font-size:14px;line-height:1.4}
+.status.warn{background:rgba(245,181,68,.1);border:1px solid var(--amber-line)}
+.status.warn b{color:var(--amber)}
+.status.ok{background:rgba(55,217,246,.08);border:1px solid #2E5E6B}
+.status.ok b{color:var(--cyan)}
+.status.empty{border:1px dashed var(--line2);color:var(--muted)}
+.big{font-size:30px;font-weight:700;color:var(--cyan)}
+.range{position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,#1D3A7C,#37D9F6);margin:12px 0 6px}
+.range i{position:absolute;top:-4px;width:4px;height:18px;background:#fff;border-radius:2px;transform:translateX(-50%)}
+.range-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--soft)}
+.cover{display:grid;grid-template-columns:0.85fr 2fr 0.85fr;gap:18px}
+.cover h3{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px}
+.cover .n{width:22px;height:22px;border-radius:50%;border:1px solid var(--cyan);display:inline-flex;align-items:center;justify-content:center;font:700 11px Orbitron,sans-serif;color:var(--cyan)}
+.cover p{margin:0 0 6px;font-size:13px;line-height:1.45;color:var(--soft)}
+.alt{display:flex;flex-direction:column;gap:8px}
+.alt-row{background:var(--card2);border-radius:10px;padding:7px 12px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center}
+.alt-row b{font-size:14px}
+.alt-row .cost{font-size:14px;font-weight:700;text-align:right;white-space:nowrap}
+.alt-row small{font-size:12px;color:var(--muted);line-height:1.35}
+.actions{display:flex;justify-content:space-between;gap:12px;margin-top:auto}
+
+/* Plan */
+.plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:start}
+.plan-grid .card{display:flex;flex-direction:column;gap:18px}
+.plan-grid .actions{margin-top:8px}
+.who{display:flex;align-items:center;gap:14px}
+.who label{flex-grow:1;font-size:16px}
+.who .money{width:190px}
+.radios{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.radios label{display:flex;align-items:center;gap:10px;height:46px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);background:var(--card2);font-size:15px}
+.radios input{width:18px;height:18px;accent-color:var(--cyan)}
+
+/* P1: camino */
+.trail{position:relative;width:556px;height:360px;margin:0 auto}
+.trail svg{position:absolute;inset:0}
+.trail-label{position:absolute;width:150px;text-align:center;font-size:14px;line-height:1.25;color:var(--fg)}
+.trail-label b{display:block;font-weight:500}
+.trail-label small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.road-dash{animation:roadflow 1.4s linear infinite}
+@keyframes roadflow{to{stroke-dashoffset:-24}}
+.stop{transform-box:fill-box;transform-origin:center;animation:pop .5s ease-out both}
+@keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+.traveler{filter:drop-shadow(0 0 6px rgba(55,217,246,.9))}
+@media (prefers-reduced-motion: reduce){.road-dash,.stop{animation:none}.traveler{display:none}}
+.who-btn{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);background:transparent;color:var(--fg);font:500 15px Roboto,sans-serif;cursor:pointer}
+.who-btn .chev{transition:transform .2s;color:var(--muted)}
+.who-btn.open .chev{transform:rotate(180deg)}
+
+/* Indicador para quien facilita */
+#indicator{position:absolute;right:16px;bottom:12px;padding:5px 10px;border-radius:8px;background:rgba(0,0,0,.55);color:#C9CED8;font-size:12px;opacity:0;transition:opacity .3s;pointer-events:none}
+#indicator.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+<!-- P1 · Tarea 1 · Invitación -->
+<section class="slide" data-label="P1 Invitación">
+  <header class="topbar">
+    <div class="brand"><span class="logo">HTF</span><span class="sep"></span><span class="by">Una iniciativa de CAPPES</span></div>
+  </header>
+  <main style="flex-grow:1;padding:56px 72px 48px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:72px;align-items:center">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <span style="font-family:Orbitron,sans-serif;font-weight:900;font-size:14px;letter-spacing:.16em;color:var(--muted)">HACKEA TU FUTURO</span>
+      <h1 style="margin:0;font-size:42px;line-height:1.18">Tu hijo está por elegir su camino. Acompáñalo con información clara.</h1>
+      <p style="margin:0;font-size:18px;line-height:1.55;color:#B4BAC6;max-width:560px">No necesitas tener todas las respuestas. Te damos una ruta ordenada, con datos reales de carreras, costos y becas, para que lo escuches, conversen y decidan juntos sin apostar a ciegas.</p>
+      <div style="margin-top:12px;max-width:540px">
+        <label class="field" for="wsp" style="font-size:16px">Tu número de WhatsApp</label>
+        <div style="display:flex;gap:12px">
+          <input id="wsp" class="input" type="tel" placeholder="Ej. 987 654 321" style="height:56px;font-size:17px">
+          <button type="button" class="btn-primary" style="height:56px;white-space:nowrap">Recibir mi acceso</button>
+        </div>
+        <div class="hint" style="font-size:14px">Solo lo usamos para enviarte tu acceso. Un solo mensaje, sin publicidad.</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card" style="padding:24px 28px 20px;border-radius:16px">
+        <div class="card-title" style="font-size:13px;margin-bottom:4px">LA RUTA QUE RECORRERÁN JUNTOS <span class="tag">6 pasos · a su ritmo</span></div>
+        <div class="trail" id="trail" role="img" aria-label="Camino de 6 pasos: punto de partida, conocer a tu hijo, rutas posibles, carreras y mercado, costo y retorno, decidir juntos">
+          <svg width="556" height="360" viewBox="0 0 556 360" aria-hidden="true">
+            <defs>
+              <linearGradient id="roadGlow" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#1D3A7C"/><stop offset="1" stop-color="#37D9F6"/></linearGradient>
+            </defs>
+            <path id="road" d="M28,300 H456 A60,60 0 0 0 456,180 H100 A60,60 0 0 1 100,60 H500" fill="none" stroke="#263247" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M28,300 H456 A60,60 0 0 0 456,180 H100 A60,60 0 0 1 100,60 H500" fill="none" stroke="url(#roadGlow)" stroke-width="3" stroke-linecap="round" stroke-dasharray="10 14" class="road-dash"/>
+            <circle r="7" fill="#37D9F6" class="traveler"><animateMotion dur="9s" repeatCount="indefinite" rotate="auto"><mpath href="#road"/></animateMotion></circle>
+            <circle cx="28" cy="300" r="6" fill="#9DA3AF"/>
+            <g id="trail-stops"></g>
+            <g transform="translate(500,60)"><path d="M0,0 V-34" stroke="#F2F2F2" stroke-width="2"/><path d="M0,-34 L22,-27 L0,-20 Z" fill="#37D9F6"/></g>
+          </svg>
+          <span class="trail-label" style="left:6px;top:322px;width:80px;text-align:left;color:var(--muted)">Hoy</span>
+          <span class="trail-label" style="left:330px;top:4px;width:160px;text-align:right;color:var(--cyan-2);font-weight:500">Una decisión en familia</span>
+          <div id="trail-labels"></div>
+        </div>
+      </div>
+      <div style="position:relative;display:flex;flex-direction:column">
+        <button type="button" id="who-btn" class="who-btn" aria-expanded="false" aria-controls="who-panel">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#37D9F6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v5h1"/></svg>
+          ¿Quién está detrás?
+          <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div id="who-panel" hidden style="position:absolute;left:0;right:0;top:50px;z-index:2;padding:16px 20px;background:var(--card2);border:1px solid var(--line2);border-radius:14px;box-shadow:0 12px 30px rgba(0,0,0,.35)">
+          <p style="margin:0;font-size:15px;line-height:1.55;color:var(--soft)">CAPPES estudia la educación superior y el mercado laboral del Perú. No vendemos ninguna universidad ni instituto: solo queremos que tu hijo elija con información.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+<!-- P2A · Tareas 2 y 4 · Mapa -->
+<section class="slide" data-label="P2A Mapa de la ruta">
+  <div class="topbar-slot"></div>
+  <div class="map-slot" style="flex-grow:1;display:flex"></div>
+</section>
+
+<!-- P2B · Tarea 2 · Mito sobre el mapa -->
+<section class="slide" data-label="P2B Mito sobre el mapa">
+  <div class="topbar-slot"></div>
+  <div class="map-slot" style="flex-grow:1;display:flex"></div>
+  <div class="overlay">
+    <div class="modal" role="dialog" aria-labelledby="myth-title">
+      <div class="modal-top">
+        <span class="eyebrow" id="myth-title">¿MITO O REALIDAD?</span>
+        <button type="button" class="close" aria-label="Cerrar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <p class="myth">«Si mi hijo estudia en un instituto, ya no puede ir a la universidad.»</p>
+      <div class="vf"><button type="button">Verdadero</button><button type="button">Falso</button></div>
+      <div class="answer">
+        <b>Falso</b>
+        <p>Al terminar el instituto, tu hijo puede pasar a la universidad y convalidar cursos que ya aprobó. Cuántos le reconocen depende de cada universidad. Hay más de un camino para llegar a lo que quiere.</p>
+        <span style="font-size:14px;color:var(--muted)">Lo verán con más detalle en el paso 3 de la ruta.</span>
+      </div>
+      <div style="display:flex;justify-content:flex-end"><button type="button" class="btn-primary">Ver la ruta completa</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- P4 · Tarea 5 · Personaliza y ficha (interactiva) -->
+<section class="slide" data-label="P4 Ficha (interactiva)">
+  <div class="topbar-slot"></div>
+  <div class="layout">
+    <aside class="sidebar" data-current="5"></aside>
+    <div class="main">
+      <div class="page-head">
+        <span class="eyebrow">PASO 5 DE 6</span>
+        <h1>Cuánto cuesta y cuánto rinde</h1>
+        <p>Es una inversión grande y da miedo equivocarse. Aquí está el costo completo y otras rutas, para conversarlo con calma con tu hijo.</p>
+      </div>
+      <div class="ficha-grid">
+        <div class="left-col">
+          <div class="card">
+            <div class="card-title">LO QUE TU HIJO QUIERE ESTUDIAR</div>
+            <label class="field" for="career">Carrera</label>
+            <select id="career" class="input"></select>
+            <div class="hint">Lista de 99 carreras con datos del mercado laboral.</div>
+            <div style="height:14px"></div>
+            <label class="field" for="budget">¿Cuánto pueden destinar al mes?</label>
+            <div class="money"><span>S/</span><input id="budget" inputmode="numeric" placeholder="Ej. 1,400" autocomplete="off"></div>
+            <div class="hint">Lo que la familia puede pagar cada mes, sin contar becas ni créditos.</div>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn-secondary">Volver al mapa</button>
+            <button type="button" class="btn-primary">Armar el plan</button>
+          </div>
+        </div>
+        <div class="right-col">
+          <div class="row2">
+            <div class="card">
+              <div class="card-title">COSTO DE CADA MES <span class="tag" id="cost-type">Universidad privada</span></div>
+              <div class="line"><span>Pensión</span><span id="c-pension">S/ 1,333</span></div>
+              <div class="line"><span>Lo que no ves en la pensión <span class="qmark" title="Materiales, nivelación, subida de escalas y titulación, repartidos por mes.">?</span><small>Materiales, nivelación, escalas y titulación</small></span><span id="c-hidden">S/ 745</span></div>
+              <div class="total"><span style="font-weight:700">Cada mes</span><b id="c-total">S/ 2,078</b></div>
+              <div class="line" style="margin-bottom:0;color:var(--soft)"><span>Pueden destinar</span><span id="c-budget" style="color:var(--cyan)">—</span></div>
+              <div class="bar" aria-hidden="true"><span class="in" id="bar-in" style="width:0%"></span><span class="gap" id="bar-gap" style="width:0%"></span></div>
+              <div id="c-status" class="status empty">Escribe cuánto pueden destinar al mes y te mostramos si alcanza.</div>
+              <div class="source">Costos referenciales de ejemplo.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">LO QUE RINDE LA CARRERA <span class="tag" id="r-level">Universidad</span></div>
+              <div style="font-size:13px;color:var(--muted)">Sueldo promedio de quienes la estudiaron</div>
+              <div class="big" id="r-avg">S/ 3,764</div>
+              <div class="range" aria-hidden="true"><i id="r-mark" style="left:50%"></i></div>
+              <div class="range-labels"><span id="r-min">S/ 3,214</span><span id="r-max">S/ 4,314</span></div>
+              <div style="font-size:14px;margin-top:10px">Equivale a <b id="r-mult">3.6</b> sueldos mínimos</div>
+              <div class="hint" style="font-size:13px">Dónde se ubique tu hijo en ese rango depende de su esfuerzo, dónde estudie y su experiencia.</div>
+              <div class="source">Fuente: Enaho 2015-2024, vía Hackea tu Futuro.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">CÓMO CUBRIR LA DIFERENCIA <span class="tag">en este orden</span></div>
+            <div class="cover">
+              <div>
+                <h3><span class="n">1</span>Becas</h3>
+                <p><b style="color:var(--fg)">Beca 18 (Pronabec):</b> buen rendimiento y familias en pobreza según el SISFOH.</p>
+                <p><b style="color:var(--fg)">De la institución:</b> por rendimiento.</p>
+                <label class="field" for="sisfoh" style="font-size:13px;margin:6px 0 4px">SISFOH (opcional)<span class="qmark" title="Clasificación socioeconómica del Estado. Solo la usamos para mostrarte becas que te aplican.">?</span></label>
+                <select id="sisfoh" class="input" style="height:34px;font-size:13px;padding:0 8px;color:var(--muted)"><option>Elegir</option><option>Pobre extremo</option><option>Pobre</option><option>No pobre</option><option>No la conozco</option></select>
+              </div>
+              <div>
+                <h3><span class="n">2</span>Otras rutas a la misma carrera</h3>
+                <div class="alt" id="alts"></div>
+              </div>
+              <div>
+                <h3><span class="n">3</span>Créditos educativos</h3>
+                <p>Del Estado (Pronabec) o de un banco: pagan una parte durante la carrera y el resto al terminar.</p>
+                <p>Revisen tasa, plazo y si piden aval.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- P5 · Tarea 6 · Plan de pago -->
+<section class="slide" data-label="P5 Plan de pago">
+  <div class="topbar-slot"></div>
+  <div class="layout">
+    <aside class="sidebar" data-current="6"></aside>
+    <div class="main">
+      <div class="page-head">
+        <span class="eyebrow">PASO 6 DE 6 · PLAN A</span>
+        <h1>Nuestro plan de pago</h1>
+        <p>Este plan lo arman juntos: tu hijo también sabe qué puede aportar y qué le preocupa. Pueden cambiarlo cuando quieran.</p>
+      </div>
+      <div class="plan-grid">
+        <div class="card">
+          <div><label class="field" for="p-ruta">Ruta y carrera que eligen</label><input id="p-ruta" class="input"></div>
+          <div><label class="field" for="p-costo">Cuánto costará cada mes</label><div class="money"><span>S/</span><input id="p-costo" inputmode="numeric"></div></div>
+          <div><label class="field" for="p-beca">¿A qué beca van a postular?</label><input id="p-beca" class="input"></div>
+          <fieldset style="margin:0;padding:0;border:0">
+            <legend class="field" style="font-size:14px;font-weight:500;margin-bottom:8px;padding:0">¿Habrá un año previo de academia?</legend>
+            <div class="radios"><label><input type="radio" name="acad">Sí</label><label><input type="radio" name="acad">No</label></div>
+          </fieldset>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:0">¿QUIÉN CUBRE CADA MONTO?</div>
+          <div class="who"><label for="w1">Familia</label><div class="money"><span>S/</span><input id="w1" inputmode="numeric"></div></div>
+          <div class="who"><label for="w2">Tu hijo</label><div class="money"><span>S/</span><input id="w2" inputmode="numeric"></div></div>
+          <div class="who"><label for="w3">Beca</label><div class="money"><span>S/</span><input id="w3" inputmode="numeric"></div></div>
+          <div class="who"><label for="w4">Crédito</label><div class="money"><span>S/</span><input id="w4" inputmode="numeric"></div></div>
+          <div class="who" style="padding-top:12px;border-top:1px solid var(--line)"><span style="flex-grow:1;font-size:16px;font-weight:700">Total cada mes</span><span style="width:190px;padding-left:14px;color:var(--muted)">S/ ______</span></div>
+          <div class="actions">
+            <button type="button" class="btn-secondary">Volver a la ficha</button>
+            <button type="button" class="btn-primary">Guardar nuestro plan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="indicator"></div>
+</div></div>
+
+<script>
+// ---- Datos de carreras: copiados de la app Hackea tu Futuro (pestaña Carreras). Fuente: Enaho 2015-2024.
+// [nombre, nivel (U = universidad, I = instituto), promedio, mínimo, máximo] en soles al mes
+var CAREERS=[["Administración de Empresas","I",1852,1752,1952],["Administración de Empresas","U",2832,2711,2952],["Administración de Servicios Turísticos, Hotelería y Gastronomía","I",1777,1655,1899],["Administración de Servicios Turísticos, Hotelería y Gastronomía","U",1975,1777,2173],["Agropecuaria","I",1431,1314,1548],["Agropecuaria","U",2579,2358,2801],["Antropología y Arqueología","U",2387,1837,2938],["Arquitectura y Urbanismo","U",3217,2914,3521],["Arte","I",1851,1515,2188],["Artes","U",1820,1471,2168],["Biología","U",2782,2435,3130],["Ciencias Forestales","I",1721,1175,2267],["Ciencias Forestales","U",2560,1937,3182],["Ciencias de la Computación","I",1686,1621,1752],["Ciencias de la Computación","U",2142,1734,2550],["Ciencias de la Comunicación","I",2340,1950,2730],["Ciencias de la Comunicación","U",2520,2305,2734],["Contabilidad y Finanzas","I",1545,1485,1604],["Contabilidad y Finanzas","U",2679,2560,2797],["Derecho","U",3096,2889,3302],["Diseño","I",1776,1641,1910],["Diseño","U",2269,1906,2633],["Ecología y Medio Ambiente","U",2270,2045,2495],["Economía","U",3047,2734,3360],["Educación 1/","U",2741,2169,3314],["Educación Artística","I",1621,1380,1862],["Educación Artística","U",1772,1538,2006],["Educación Física","I",2015,1863,2167],["Educación Física","U",1967,1733,2201],["Educación Inicial","I",1688,1593,1784],["Educación Inicial","U",1947,1849,2045],["Educación Primaria","I",2042,1968,2117],["Educación Primaria","U",2227,2147,2307],["Educación Secundaria","I",2014,1923,2105],["Educación Secundaria","U",2232,2149,2316],["Educación Tecnológica","U",2501,2033,2968],["Enfermería","I",1433,1393,1472],["Enfermería","U",2858,2710,3006],["Estadística","U",3364,2652,4075],["Farmacia y Bioquímica","I",1353,1275,1431],["Farmacia y Bioquímica","U",2568,2286,2850],["Física","U",1539,1136,1941],["Geografía","U",3040,2340,3741],["Geología","U",4477,3535,5419],["Historia","U",1780,1209,2351],["Idiomas","I",1757,1137,2377],["Idiomas","U",2377,1971,2783],["Ingeniería Civil","I",1966,1818,2115],["Ingeniería Civil","U",3623,3396,3851],["Ingeniería Electrónica","I",2049,1896,2203],["Ingeniería Electrónica","U",3609,3190,4028],["Ingeniería Eléctrica","I",2114,2015,2214],["Ingeniería Eléctrica","U",3764,3214,4314],["Ingeniería Industrial","I",2181,1695,2667],["Ingeniería Industrial","U",3626,3289,3963],["Ingeniería Mecánica","I",2088,2021,2156],["Ingeniería Mecánica","U",3940,3582,4299],["Ingeniería Minera, Metalurgia y Petróleo","I",1992,1737,2248],["Ingeniería Minera, Metalurgia y Petróleo","U",3676,3241,4111],["Ingeniería Pesquera","I",1423,1131,1714],["Ingeniería Pesquera","U",2666,2360,2972],["Ingeniería Sanitaria","U",3494,2165,4824],["Ingeniería Textil y Confecciones","I",1446,1260,1632],["Ingeniería de Sistemas y Cómputo","U",3308,3087,3529],["Ingeniería de Telecomunicaciones","I",2134,1569,2699],["Ingeniería en Agroindustria","I",1478,1263,1694],["Ingeniería en Agroindustria","U",2523,1954,3093],["Ingeniería en Industrias Alimentarias","I",1395,1182,1607],["Ingeniería en Industrias Alimentarias","U",2497,2070,2924],["Lingüística y Literatura","U",2102,1336,2867],["Marketing","I",2312,1922,2703],["Marketing","U",2801,2315,3287],["Matemática","U",2327,1895,2759],["Medicina","U",5203,4870,5536],["Música","I",1773,1171,2376],["Música","U",1979,1509,2449],["Negocios Internacionales","I",1751,1569,1934],["Negocios Internacionales","U",2606,2304,2907],["Nutrición","U",2357,1972,2743],["Obstetricia","I",1221,765,1676],["Obstetricia","U",2366,2197,2534],["Odontología","I",1539,1329,1750],["Odontología","U",2200,2011,2388],["Otras Carreras de Administración","U",2764,2183,3345],["Periodismo y Locución","U",2883,2323,3443],["Psicología","U",2115,1953,2277],["Química","I",1845,1526,2163],["Química","U",3252,2894,3611],["Secretariado","I",1565,1430,1700],["Servicios Sociales y Asistenciales","U",2342,1941,2742],["Tecnología Médica","I",1433,1318,1548],["Tecnología Médica","U",2905,2547,3263],["Teología y Filosofía","I",1050,734,1365],["Teología y Filosofía","U",2441,1578,3304],["Trabajo Social","U",2580,2184,2976],["Tratamiento de Belleza y Peluquería","I",1137,938,1336],["Turismo","I",1474,1299,1648],["Veterinaria","U",2328,2027,2629],["Zootecnia","U",1951,1664,2237]];
+var SUELDO_MINIMO=1035; // el mismo valor que usa la app
+
+// ---- Montos de ejemplo (no vienen de la app): ajústalos aquí si tienes cifras reales
+var COSTOS={
+  universidad:{pension:1333, noVes:745, etiqueta:"Universidad privada"},
+  instituto:{pension:550, noVes:200, etiqueta:"Instituto privado"},
+  publica:350, academia:450, institutoPublico:250
+};
+
+var STEPS=[
+  {n:1,name:"Punto de partida de la familia",q:"¿Dónde estamos?",t:"5 min",kid:false},
+  {n:2,name:"Conocer lo que le interesa a tu hijo",q:"¿Qué le interesa y en qué es bueno?",t:"15 min",kid:true,opt:true},
+  {n:3,name:"Rutas: universidad, instituto y más",q:"¿Qué caminos existen para su perfil?",t:"10 min",kid:true},
+  {n:4,name:"Carreras y mercado laboral",q:"¿Qué carreras existen para su perfil?",t:"15 min",kid:true},
+  {n:5,name:"Cuánto cuesta y cuánto rinde",q:"¿Cómo se llega, cuánto cuesta y cuánto rinde?",t:"10 min",kid:true},
+  {n:6,name:"Decidir juntos su plan",q:"¿Qué opciones seguimos y cómo las pagamos?",t:"20 min",kid:true}
+];
+var KID_ICON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14.5c3 0 6 1.8 6 5.5"/></svg>';
+var CLOCK_ICON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+var CHECK_ICON='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
+
+function fmt(n){return "S/ "+Math.round(n).toLocaleString("en-US");}
+
+function topbarHTML(){
+  return '<header class="topbar"><div class="brand"><span class="logo">HTF</span><span class="sep"></span><span class="by">Una iniciativa de CAPPES</span></div>'+
+  '<div class="top-right"><span class="saved"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#37D9F6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>Tu avance está guardado</span>'+
+  '<span class="badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#37D9F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>Sin publicidad de universidades</span>'+
+  '<button type="button" class="help-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><path d="M12 17h.01"/></svg>¿Dudas?</button></div></header>';
+}
+
+function sidebarHTML(current){
+  var done=current-1, items="";
+  STEPS.forEach(function(s){
+    var st=s.n<current?"done":(s.n===current?"current":"pending");
+    var meta=s.t+(s.kid?" · con tu hijo":"")+(s.opt?" · opcional":"");
+    items+='<div class="step '+st+'"><span class="dot">'+(st==="done"?CHECK_ICON:s.n)+'</span><div><div class="s-name">'+s.name+'</div><div class="s-meta">'+(st==="done"?"Hecho":meta)+'</div></div></div>';
+  });
+  return '<span class="eyebrow">TU RUTA</span><p class="side-sub">Para acompañar a tu hijo en su decisión</p>'+items+
+    '<div class="side-progress"><span class="p-text">'+done+' de 6 pasos hechos</span><div class="pbar"><span style="width:'+(done/6*100)+'%"></span></div></div>';
+}
+
+function mapHTML(){
+  var cards="";
+  STEPS.forEach(function(s){
+    cards+='<div class="r-card"><span class="r-num">'+s.n+'</span><div class="r-name">'+s.name+'</div><div class="r-q">'+s.q+'</div>'+
+      '<div class="r-meta"><span style="display:inline-flex;align-items:center;gap:4px">'+CLOCK_ICON+s.t+'</span>'+
+      (s.kid?'<span class="with-kid">'+KID_ICON+'Con tu hijo</span>':'')+(s.opt?'<span class="chip neutral">Opcional</span>':'')+'</div></div>';
+  });
+  var arrow='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#37D9F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  return '<div class="map-main">'+
+    '<div class="map-head"><div><span class="eyebrow">TU RUTA PARA ACOMPAÑAR A TU HIJO</span>'+
+    '<h1>La decisión es de tu hijo. Tú caminas a su lado.</h1>'+
+    '<p>Esta es la ruta completa. Cada paso les da información para conversar y decidir juntos. Avanzan a su ritmo y lo que hagan se guarda.</p></div>'+
+    '<div class="map-stats"><div class="stat"><b>6</b><span>pasos</span></div><div class="stat"><b>75 min</b><span>en total, por partes</span></div><div class="stat"><b>5</b><span>pasos con tu hijo</span></div></div></div>'+
+    '<div class="route">'+cards+'</div>'+
+    '<div style="display:flex;flex-direction:column;gap:14px"><div class="doors-head"><h2>¿Qué te preocupa hoy? Empieza por ahí</h2><span>Puedes cambiar de puerta cuando quieras</span></div>'+
+    '<div class="doors">'+
+    '<button type="button" class="door"><span><b>¿Cuánto nos costará?</b><small>Empiezas en el paso 1 y vas directo al 5</small></span>'+arrow+'</button>'+
+    '<button type="button" class="door"><span><b>¿Mi hijo estará preparado?</b><small>Empiezas en el paso 1 y vas directo al 3</small></span>'+arrow+'</button>'+
+    '<button type="button" class="door"><span><b>Quiero recorrer todo en orden</b><small>Empiezas en el paso 1</small></span>'+arrow+'</button>'+
+    '</div></div></div>';
+}
+
+// Montaje de piezas compartidas
+document.querySelectorAll(".topbar-slot").forEach(function(el){el.outerHTML=topbarHTML();});
+document.querySelectorAll(".map-slot").forEach(function(el){el.innerHTML=mapHTML();});
+document.querySelectorAll(".sidebar").forEach(function(el){el.innerHTML=sidebarHTML(+el.dataset.current);});
+// P1: paradas sobre el camino (posición en el dibujo de 556 x 360)
+(function(){
+  var SHORT=["Punto de partida","Conocer a tu hijo","Rutas posibles","Carreras y mercado","Costo y retorno","Decidir juntos"];
+  var POS=[[150,300],[350,300],[380,180],[176,180],[200,60],[400,60]];
+  var g="", labels="";
+  POS.forEach(function(p,i){
+    var s=STEPS[i];
+    g+='<g class="stop" style="animation-delay:'+(i*0.35)+'s"><circle cx="'+p[0]+'" cy="'+p[1]+'" r="17" fill="#121A2B" stroke="#37D9F6" stroke-width="2"/>'+
+       '<text x="'+p[0]+'" y="'+(p[1]+4.5)+'" text-anchor="middle" fill="#37D9F6" font-family="Orbitron,sans-serif" font-size="13" font-weight="700">'+s.n+'</text></g>';
+    labels+='<span class="trail-label" style="left:'+(p[0]-75)+'px;top:'+(p[1]+22)+'px"><b>'+SHORT[i]+'</b><small>'+s.t+(s.kid?' · con tu hijo':'')+'</small></span>';
+  });
+  document.getElementById("trail-stops").innerHTML=g;
+  document.getElementById("trail-labels").innerHTML=labels;
+  var btn=document.getElementById("who-btn"), panel=document.getElementById("who-panel");
+  btn.addEventListener("click",function(){var open=panel.hidden;panel.hidden=!open;btn.setAttribute("aria-expanded",String(open));btn.classList.toggle("open",open);});
+})();
+
+// ---- P4: ficha que se recalcula
+var byName={};
+CAREERS.forEach(function(c){var name=c[0].replace(/\s*1\/$/,"");(byName[name]=byName[name]||{})[c[1]]={avg:c[2],min:c[3],max:c[4]};});
+var names=Object.keys(byName).sort(function(a,b){return a.localeCompare(b,"es");});
+var sel=document.getElementById("career");
+sel.innerHTML=names.map(function(n){return '<option'+(n==="Ingeniería Eléctrica"?" selected":"")+'>'+n+'</option>';}).join("");
+var budgetEl=document.getElementById("budget");
+
+function chip(cost,budget){
+  if(!budget) return '';
+  return cost<=budget?'<span class="chip ok">Alcanza</span>':'<span class="chip warn">'+fmt(cost-budget)+' más</span>';
+}
+function altRow(name,cost,costLabel,note,budget){
+  return '<div class="alt-row"><b>'+name+'</b><span class="cost">'+costLabel+'</span><small>'+note+'</small><span style="text-align:right">'+chip(cost,budget)+'</span></div>';
+}
+
+function update(){
+  var c=byName[sel.value], digits=budgetEl.value.replace(/[^0-9]/g,"");
+  var budget=digits?parseInt(digits,10):0;
+  if(digits && budgetEl.value!==budget.toLocaleString("en-US")) budgetEl.value=budget.toLocaleString("en-US");
+  var isU=!!c.U, data=isU?c.U:c.I, cost=isU?COSTOS.universidad:COSTOS.instituto;
+  var total=cost.pension+cost.noVes;
+  document.getElementById("cost-type").textContent=cost.etiqueta;
+  document.getElementById("c-pension").textContent=fmt(cost.pension);
+  document.getElementById("c-hidden").textContent=fmt(cost.noVes);
+  document.getElementById("c-total").textContent=fmt(total);
+  document.getElementById("c-budget").textContent=budget?fmt(budget):"—";
+  var inPct=budget?Math.min(budget,total)/total*100:0, gapPct=budget&&budget<total?(total-budget)/total*100:0;
+  document.getElementById("bar-in").style.width=inPct+"%";
+  document.getElementById("bar-gap").style.width=gapPct+"%";
+  var st=document.getElementById("c-status");
+  if(!budget){st.className="status empty";st.innerHTML="Escribe cuánto pueden destinar al mes y te mostramos si alcanza.";}
+  else if(budget<total){st.className="status warn";st.innerHTML="Faltan <b>"+fmt(total-budget)+" al mes</b>. Abajo ven cómo cubrirlo.";}
+  else{st.className="status ok";st.innerHTML="<b>Alcanza.</b> Les quedan "+fmt(budget-total)+" al mes de margen.";}
+  document.getElementById("r-level").textContent=isU?"Universidad":"Instituto";
+  document.getElementById("r-avg").textContent=fmt(data.avg);
+  document.getElementById("r-min").textContent=fmt(data.min);
+  document.getElementById("r-max").textContent=fmt(data.max);
+  document.getElementById("r-mark").style.left=((data.avg-data.min)/Math.max(1,data.max-data.min)*100)+"%";
+  document.getElementById("r-mult").textContent=(data.avg/SUELDO_MINIMO).toFixed(1);
+  var alts="";
+  if(isU){
+    alts+=altRow("Universidad pública",COSTOS.publica,fmt(COSTOS.publica)+"/mes","Sin pensión · academia previa "+fmt(COSTOS.academia)+"/mes",budget);
+    var instCost=COSTOS.instituto.pension+COSTOS.instituto.noVes;
+    if(c.I){
+      alts+=altRow("Instituto",instCost,fmt(instCost)+"/mes","2 a 3 años · técnico gana "+fmt(c.I.avg),budget);
+      alts+=altRow("Instituto y luego universidad",total,fmt(instCost)+" → "+fmt(total).replace("S/ ",""),"Convalida cursos al pasar a la universidad",budget);
+    }else{
+      alts+='<div class="alt-row"><small style="grid-column:1/-1">Esta carrera no tiene versión técnica en institutos con datos disponibles.</small></div>';
+    }
+  }else{
+    alts+=altRow("Instituto público",COSTOS.institutoPublico,fmt(COSTOS.institutoPublico)+"/mes","Menor costo · vacantes limitadas",budget);
+  }
+  document.getElementById("alts").innerHTML=alts;
+}
+sel.addEventListener("change",update);
+budgetEl.addEventListener("input",update);
+update();
+
+// ---- Navegación para quien facilita: flechas, AvPág/RePág, números 1-5, F = pantalla completa
+var slides=[].slice.call(document.querySelectorAll(".slide")), idx=0, hideT;
+function show(i){
+  idx=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach(function(s,k){s.classList.toggle("active",k===idx);});
+  var ind=document.getElementById("indicator");
+  ind.textContent=(idx+1)+" / "+slides.length+" · "+slides[idx].dataset.label;
+  ind.classList.add("show");clearTimeout(hideT);hideT=setTimeout(function(){ind.classList.remove("show");},1500);
+  try{history.replaceState(null,"","#"+(idx+1));}catch(e){}
+}
+document.addEventListener("keydown",function(e){
+  var tag=(e.target.tagName||"").toLowerCase();
+  if(tag==="input"||tag==="select"||tag==="textarea"){ if(e.key==="Escape") e.target.blur(); return; }
+  if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){e.preventDefault();show(idx+1);}
+  else if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();show(idx-1);}
+  else if(/^[1-9]$/.test(e.key)){show(parseInt(e.key,10)-1);}
+  else if(e.key==="f"||e.key==="F"){ if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();} else {document.exitFullscreen();} }
+});
+function fit(){var s=Math.min(window.innerWidth/1440,window.innerHeight/810);document.getElementById("stage").style.transform="scale("+s+")";}
+window.addEventListener("resize",fit);fit();
+var start=parseInt((location.hash||"#1").slice(1),10);show(isNaN(start)?0:start-1);
+</script>
+</body>
+</html>
