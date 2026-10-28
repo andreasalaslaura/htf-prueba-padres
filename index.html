@@ -114,36 +114,40 @@ label.field{font-size:14px;font-weight:500;display:block;margin-bottom:6px}
 .answer p{margin:0;font-size:16px;line-height:1.55;color:var(--soft)}
 
 /* Ficha */
-.ficha-grid{flex-grow:1;min-height:0;display:grid;grid-template-columns:290px minmax(0,1fr);gap:20px}
-.left-col{display:flex;flex-direction:column;gap:16px}
-.right-col{display:flex;flex-direction:column;gap:16px;min-width:0}
-.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.line{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;margin-bottom:6px;gap:12px}
+.pick-bar{display:flex;align-items:flex-end;gap:20px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 20px}
+.pick-bar .pick{width:440px}
+.pick-bar .hint{margin:0 0 12px}
+.p4-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.line{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;margin-bottom:10px;gap:12px}
 .line small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
-.total{display:flex;justify-content:space-between;align-items:baseline;padding-top:10px;border-top:1px solid var(--line);margin-bottom:8px}
-.total b{font-size:22px}
-.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--line2);margin:8px 0 10px}
-.bar .in{background:var(--cyan)}
-.bar .gap{background:var(--amber)}
-.status{display:block;padding:9px 12px;border-radius:10px;font-size:14px;line-height:1.4}
-.status.warn{background:rgba(245,181,68,.1);border:1px solid var(--amber-line)}
-.status.warn b{color:var(--amber)}
-.status.ok{background:rgba(55,217,246,.08);border:1px solid #2E5E6B}
-.status.ok b{color:var(--cyan)}
-.status.empty{border:1px dashed var(--line2);color:var(--muted)}
+.total{display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;border-top:1px solid var(--line)}
+.total b{font-size:30px;color:var(--cyan)}
 .big{font-size:30px;font-weight:700;color:var(--cyan)}
 .range{position:relative;height:10px;border-radius:5px;background:linear-gradient(90deg,#1D3A7C,#37D9F6);margin:12px 0 6px}
 .range i{position:absolute;top:-4px;width:4px;height:18px;background:#fff;border-radius:2px;transform:translateX(-50%)}
 .range-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--soft)}
-.cover{display:grid;grid-template-columns:0.85fr 2fr 0.85fr;gap:18px}
-.cover h3{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px}
-.cover .n{width:22px;height:22px;border-radius:50%;border:1px solid var(--cyan);display:inline-flex;align-items:center;justify-content:center;font:700 11px Orbitron,sans-serif;color:var(--cyan)}
-.cover p{margin:0 0 6px;font-size:13px;line-height:1.45;color:var(--soft)}
-.alt{display:flex;flex-direction:column;gap:8px}
-.alt-row{background:var(--card2);border-radius:10px;padding:7px 12px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center}
-.alt-row b{font-size:14px}
-.alt-row .cost{font-size:14px;font-weight:700;text-align:right;white-space:nowrap}
-.alt-row small{font-size:12px;color:var(--muted);line-height:1.35}
+.routes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.route-card{background:var(--card2);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.route-card .rc-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.route-card b{font-size:15px}
+.route-card .cost{font-size:16px;font-weight:700;white-space:nowrap}
+.route-card p{margin:0;font-size:13px;line-height:1.45;color:var(--soft)}
+.route-card.empty p{color:var(--muted)}
+.save{align-self:flex-start;display:inline-flex;padding:3px 9px;border-radius:999px;background:rgba(55,217,246,.12);color:var(--cyan-2);font-size:12px}
+.p4-grid2{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:16px;flex-grow:1;min-height:0}
+.routes2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr;gap:12px;flex-grow:1}
+.rcard{background:var(--card2);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;border:1px solid transparent}
+.rcard.base{border-color:var(--cyan);background:rgba(55,217,246,.06)}
+.rcard .rc-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.rcard .rc-head b{font-size:15px}
+.rcard .rc-cost{font-size:24px;font-weight:700;line-height:1.1}
+.rcard.base .rc-cost{color:var(--cyan)}
+.rcard .rc-cost small{font-size:13px;font-weight:400;color:var(--muted)}
+.rcard p{margin:0;font-size:13px;line-height:1.45;color:var(--soft)}
+.rcard .mini{display:flex;justify-content:space-between;font-size:13px;color:var(--soft)}
+.rcard.empty{justify-content:center}
+.rcard.empty p{color:var(--muted)}
+.base-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--cyan);color:var(--ink);font-weight:700}
 .actions{display:flex;justify-content:space-between;gap:12px;margin-top:auto}
 
 /* Plan */
@@ -271,70 +275,35 @@ label.field{font-size:14px;font-weight:500;display:block;margin-bottom:6px}
       <div class="page-head">
         <span class="eyebrow">PASO 5 DE 6</span>
         <h1>Cuánto cuesta y cuánto rinde</h1>
-        <p>Es una inversión grande y da miedo equivocarse. Aquí está el costo completo y otras rutas, para conversarlo con calma con tu hijo.</p>
+        <p>Es normal sentir miedo de equivocarse. Aquí ven el costo real y otros caminos a la misma carrera, para conversarlo con calma.</p>
       </div>
-      <div class="ficha-grid">
-        <div class="left-col">
-          <div class="card">
-            <div class="card-title">LO QUE TU HIJO QUIERE ESTUDIAR</div>
-            <label class="field" for="career">Carrera</label>
-            <select id="career" class="input"></select>
-            <div class="hint">Lista de 99 carreras con datos del mercado laboral.</div>
-            <div style="height:14px"></div>
-            <label class="field" for="budget">¿Cuánto pueden destinar al mes?</label>
-            <div class="money"><span>S/</span><input id="budget" inputmode="numeric" placeholder="Ej. 1,400" autocomplete="off"></div>
-            <div class="hint">Lo que la familia puede pagar cada mes, sin contar becas ni créditos.</div>
-          </div>
-          <div class="actions">
-            <button type="button" class="btn-secondary">Volver al mapa</button>
-            <button type="button" class="btn-primary">Armar el plan</button>
-          </div>
+      <div class="pick-bar">
+        <div class="pick">
+          <label class="field" for="career">Lo que tu hijo planea estudiar</label>
+          <select id="career" class="input"></select>
         </div>
-        <div class="right-col">
-          <div class="row2">
-            <div class="card">
-              <div class="card-title">COSTO DE CADA MES <span class="tag" id="cost-type">Universidad privada</span></div>
-              <div class="line"><span>Pensión</span><span id="c-pension">S/ 1,333</span></div>
-              <div class="line"><span>Lo que no ves en la pensión <span class="qmark" title="Materiales, nivelación, subida de escalas y titulación, repartidos por mes.">?</span><small>Materiales, nivelación, escalas y titulación</small></span><span id="c-hidden">S/ 745</span></div>
-              <div class="total"><span style="font-weight:700">Cada mes</span><b id="c-total">S/ 2,078</b></div>
-              <div class="line" style="margin-bottom:0;color:var(--soft)"><span>Pueden destinar</span><span id="c-budget" style="color:var(--cyan)">—</span></div>
-              <div class="bar" aria-hidden="true"><span class="in" id="bar-in" style="width:0%"></span><span class="gap" id="bar-gap" style="width:0%"></span></div>
-              <div id="c-status" class="status empty">Escribe cuánto pueden destinar al mes y te mostramos si alcanza.</div>
-              <div class="source">Costos referenciales de ejemplo.</div>
-            </div>
-            <div class="card">
-              <div class="card-title">LO QUE RINDE LA CARRERA <span class="tag" id="r-level">Universidad</span></div>
-              <div style="font-size:13px;color:var(--muted)">Sueldo promedio de quienes la estudiaron</div>
-              <div class="big" id="r-avg">S/ 3,764</div>
-              <div class="range" aria-hidden="true"><i id="r-mark" style="left:50%"></i></div>
-              <div class="range-labels"><span id="r-min">S/ 3,214</span><span id="r-max">S/ 4,314</span></div>
-              <div style="font-size:14px;margin-top:10px">Equivale a <b id="r-mult">3.6</b> sueldos mínimos</div>
-              <div class="hint" style="font-size:13px">Dónde se ubique tu hijo en ese rango depende de su esfuerzo, dónde estudie y su experiencia.</div>
-              <div class="source">Fuente: Enaho 2015-2024, vía Hackea tu Futuro.</div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">CÓMO CUBRIR LA DIFERENCIA <span class="tag">en este orden</span></div>
-            <div class="cover">
-              <div>
-                <h3><span class="n">1</span>Becas</h3>
-                <p><b style="color:var(--fg)">Beca 18 (Pronabec):</b> buen rendimiento y familias en pobreza según el SISFOH.</p>
-                <p><b style="color:var(--fg)">De la institución:</b> por rendimiento.</p>
-                <label class="field" for="sisfoh" style="font-size:13px;margin:6px 0 4px">SISFOH (opcional)<span class="qmark" title="Clasificación socioeconómica del Estado. Solo la usamos para mostrarte becas que te aplican.">?</span></label>
-                <select id="sisfoh" class="input" style="height:34px;font-size:13px;padding:0 8px;color:var(--muted)"><option>Elegir</option><option>Pobre extremo</option><option>Pobre</option><option>No pobre</option><option>No la conozco</option></select>
-              </div>
-              <div>
-                <h3><span class="n">2</span>Otras rutas a la misma carrera</h3>
-                <div class="alt" id="alts"></div>
-              </div>
-              <div>
-                <h3><span class="n">3</span>Créditos educativos</h3>
-                <p>Del Estado (Pronabec) o de un banco: pagan una parte durante la carrera y el resto al terminar.</p>
-                <p>Revisen tasa, plazo y si piden aval.</p>
-              </div>
-            </div>
-          </div>
+        <p class="hint">Elijan juntos entre 99 carreras con datos del mercado laboral.</p>
+      </div>
+      <div class="p4-grid2">
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="card-title">COSTO DE CADA MES SEGÚN LA RUTA <span class="tag">Costos referenciales de ejemplo</span></div>
+          <div class="routes2" id="routes"></div>
         </div>
+        <div class="card" style="display:flex;flex-direction:column">
+          <div class="card-title">LO QUE RINDE LA CARRERA <span class="tag" id="r-level">Universidad</span></div>
+          <div style="font-size:13px;color:var(--muted)">Sueldo promedio de quienes la estudiaron</div>
+          <div class="big" id="r-avg">S/ 3,764</div>
+          <div class="range" aria-hidden="true"><i id="r-mark" style="left:50%"></i></div>
+          <div class="range-labels"><span id="r-min">S/ 3,214</span><span id="r-max">S/ 4,314</span></div>
+          <div style="font-size:14px;margin-top:12px">Equivale a <b id="r-mult">3.6</b> sueldos mínimos.</div>
+          <div id="r-tech" style="font-size:14px;margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--card2)"></div>
+          <div class="hint" style="font-size:13px;margin-top:10px">Dónde se ubique tu hijo depende de su esfuerzo, dónde estudie y su experiencia.</div>
+          <div class="source" style="margin-top:auto">Fuente: Enaho 2015-2024, vía Hackea tu Futuro.</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn-secondary">Volver al mapa</button>
+        <button type="button" class="btn-primary">Armar el plan con mi hijo</button>
       </div>
     </div>
   </div>
@@ -406,7 +375,7 @@ var KID_ICON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke
 var CLOCK_ICON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 var CHECK_ICON='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
 
-function fmt(n){return "S/ "+Math.round(n).toLocaleString("en-US");}
+function fmt(n){return "S/\u00a0"+Math.round(n).toLocaleString("en-US");}
 
 function topbarHTML(){
   return '<header class="topbar"><div class="brand"><span class="logo">HTF</span><span class="sep"></span><span class="by">Una iniciativa de CAPPES</span></div>'+
@@ -469,63 +438,57 @@ document.querySelectorAll(".sidebar").forEach(function(el){el.innerHTML=sidebarH
   btn.addEventListener("click",function(){var open=panel.hidden;panel.hidden=!open;btn.setAttribute("aria-expanded",String(open));btn.classList.toggle("open",open);});
 })();
 
-// ---- P4: ficha que se recalcula
+// ---- P4: ficha que se recalcula al elegir la carrera
 var byName={};
 CAREERS.forEach(function(c){var name=c[0].replace(/\s*1\/$/,"");(byName[name]=byName[name]||{})[c[1]]={avg:c[2],min:c[3],max:c[4]};});
 var names=Object.keys(byName).sort(function(a,b){return a.localeCompare(b,"es");});
 var sel=document.getElementById("career");
 sel.innerHTML=names.map(function(n){return '<option'+(n==="Ingeniería Eléctrica"?" selected":"")+'>'+n+'</option>';}).join("");
-var budgetEl=document.getElementById("budget");
 
-function chip(cost,budget){
-  if(!budget) return '';
-  return cost<=budget?'<span class="chip ok">Alcanza</span>':'<span class="chip warn">'+fmt(cost-budget)+' más</span>';
+var QHIDDEN='<span class="qmark" title="Materiales, nivelación, subida de escalas y titulación, repartidos por mes.">?</span>';
+function baseCard(name,cost){
+  var total=cost.pension+cost.noVes;
+  return '<div class="rcard base"><div class="rc-head"><b>'+name+'</b><span class="base-tag">Ruta de referencia</span></div>'+
+    '<div class="rc-cost">'+fmt(total)+' <small>al mes</small></div>'+
+    '<div class="mini"><span>Pensión</span><span>'+fmt(cost.pension)+'</span></div>'+
+    '<div class="mini"><span>Lo que no ves en la pensión'+QHIDDEN+'</span><span>'+fmt(cost.noVes)+'</span></div></div>';
 }
-function altRow(name,cost,costLabel,note,budget){
-  return '<div class="alt-row"><b>'+name+'</b><span class="cost">'+costLabel+'</span><small>'+note+'</small><span style="text-align:right">'+chip(cost,budget)+'</span></div>';
+function altCard(name,costHTML,diff,note){
+  return '<div class="rcard"><div class="rc-head"><b>'+name+'</b></div><div class="rc-cost">'+costHTML+'</div>'+
+    (diff?'<span class="save">'+diff+'</span>':'')+'<p>'+note+'</p></div>';
 }
 
 function update(){
-  var c=byName[sel.value], digits=budgetEl.value.replace(/[^0-9]/g,"");
-  var budget=digits?parseInt(digits,10):0;
-  if(digits && budgetEl.value!==budget.toLocaleString("en-US")) budgetEl.value=budget.toLocaleString("en-US");
+  var c=byName[sel.value];
   var isU=!!c.U, data=isU?c.U:c.I, cost=isU?COSTOS.universidad:COSTOS.instituto;
-  var total=cost.pension+cost.noVes;
-  document.getElementById("cost-type").textContent=cost.etiqueta;
-  document.getElementById("c-pension").textContent=fmt(cost.pension);
-  document.getElementById("c-hidden").textContent=fmt(cost.noVes);
-  document.getElementById("c-total").textContent=fmt(total);
-  document.getElementById("c-budget").textContent=budget?fmt(budget):"—";
-  var inPct=budget?Math.min(budget,total)/total*100:0, gapPct=budget&&budget<total?(total-budget)/total*100:0;
-  document.getElementById("bar-in").style.width=inPct+"%";
-  document.getElementById("bar-gap").style.width=gapPct+"%";
-  var st=document.getElementById("c-status");
-  if(!budget){st.className="status empty";st.innerHTML="Escribe cuánto pueden destinar al mes y te mostramos si alcanza.";}
-  else if(budget<total){st.className="status warn";st.innerHTML="Faltan <b>"+fmt(total-budget)+" al mes</b>. Abajo ven cómo cubrirlo.";}
-  else{st.className="status ok";st.innerHTML="<b>Alcanza.</b> Les quedan "+fmt(budget-total)+" al mes de margen.";}
+  var total=cost.pension+cost.noVes, instCost=COSTOS.instituto.pension+COSTOS.instituto.noVes;
   document.getElementById("r-level").textContent=isU?"Universidad":"Instituto";
   document.getElementById("r-avg").textContent=fmt(data.avg);
   document.getElementById("r-min").textContent=fmt(data.min);
   document.getElementById("r-max").textContent=fmt(data.max);
   document.getElementById("r-mark").style.left=((data.avg-data.min)/Math.max(1,data.max-data.min)*100)+"%";
   document.getElementById("r-mult").textContent=(data.avg/SUELDO_MINIMO).toFixed(1);
-  var alts="";
+  var tech=document.getElementById("r-tech");
+  if(isU&&c.I){tech.style.display="";tech.innerHTML="Con estudios técnicos en instituto: <b>"+fmt(c.I.avg)+"</b> en promedio.";}
+  else{tech.style.display="none";}
+  var r="";
   if(isU){
-    alts+=altRow("Universidad pública",COSTOS.publica,fmt(COSTOS.publica)+"/mes","Sin pensión · academia previa "+fmt(COSTOS.academia)+"/mes",budget);
-    var instCost=COSTOS.instituto.pension+COSTOS.instituto.noVes;
+    r+=baseCard(COSTOS.universidad.etiqueta,cost);
+    r+=altCard("Universidad pública",fmt(COSTOS.publica)+' <small>al mes</small>',fmt(total-COSTOS.publica)+" menos al mes","Sin pensión. Antes, un año de academia ("+fmt(COSTOS.academia)+"/mes). Se ingresa por examen.");
     if(c.I){
-      alts+=altRow("Instituto",instCost,fmt(instCost)+"/mes","2 a 3 años · técnico gana "+fmt(c.I.avg),budget);
-      alts+=altRow("Instituto y luego universidad",total,fmt(instCost)+" → "+fmt(total).replace("S/ ",""),"Convalida cursos al pasar a la universidad",budget);
+      r+=altCard("Instituto",fmt(instCost)+' <small>al mes</small>',fmt(total-instCost)+" menos al mes","2 a 3 años de estudio para trabajar como técnico.");
+      r+=altCard("Instituto y luego universidad",fmt(instCost)+' <small>→ '+fmt(total)+'</small>',"Menos los primeros 3 años","Convalida cursos al pasar a la universidad y puede trabajar mientras termina.");
     }else{
-      alts+='<div class="alt-row"><small style="grid-column:1/-1">Esta carrera no tiene versión técnica en institutos con datos disponibles.</small></div>';
+      r+='<div class="rcard empty" style="grid-column:span 2"><p>Esta carrera no tiene una versión técnica en institutos con datos disponibles, así que no hay ruta por instituto.</p></div>';
     }
   }else{
-    alts+=altRow("Instituto público",COSTOS.institutoPublico,fmt(COSTOS.institutoPublico)+"/mes","Menor costo · vacantes limitadas",budget);
+    r+=baseCard(COSTOS.instituto.etiqueta,cost);
+    r+=altCard("Instituto público",fmt(COSTOS.institutoPublico)+' <small>al mes</small>',fmt(total-COSTOS.institutoPublico)+" menos al mes","Menor costo, con vacantes limitadas.");
+    r+='<div class="rcard empty" style="grid-column:span 2"><p>Esta carrera se estudia en institutos. No tiene una versión universitaria con datos disponibles.</p></div>';
   }
-  document.getElementById("alts").innerHTML=alts;
+  document.getElementById("routes").innerHTML=r;
 }
 sel.addEventListener("change",update);
-budgetEl.addEventListener("input",update);
 update();
 
 // ---- Navegación para quien facilita: flechas, AvPág/RePág, números 1-5, F = pantalla completa
